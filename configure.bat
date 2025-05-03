@@ -1,0 +1,1 @@
+cmake -S . -B build -A Win32 -D CMAKE_BUILD_TYPE=Release -D simdutf_DIR="E:\VSLibs\simdutf_install"

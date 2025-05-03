@@ -12,7 +12,7 @@ add_executable(UVEMT)
 target_sources(UVEMT PRIVATE
     main.cpp
     Modes.cpp
-    FileOperations.cpp
+    FileOperations-win32.cpp
     Functions.cpp
 )
 if (WIN32)
@@ -23,3 +23,5 @@ if (WIN32)
 endif()
 
 target_include_directories(UVEMT PUBLIC ${CMAKE_CURRENT_SOURCE_DIR} ${PROJECT_BINARY_DIR}/src/UVEMT)
+
+target_link_libraries(UVEMT PUBLIC simdutf::simdutf)

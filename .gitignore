@@ -34,4 +34,6 @@
 # Microsoft office temporary files
 ~$*
 
+/.vscode/
+
 /build/

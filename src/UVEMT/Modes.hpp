@@ -3,14 +3,6 @@
 
 #include <string>
 
-// Defines
-
-#ifdef IAMT_AUDIO_ONLY
-#define IAMT_VERSION "v3.6.5.1 [AUDIO RESTRICTED BUILD]"
-#else
-#define IAMT_VERSION "v3.6.5.1"
-#endif
-
 // Structures
 
 struct TableEntry {
