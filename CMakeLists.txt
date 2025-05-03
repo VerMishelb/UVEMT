@@ -6,15 +6,21 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/$<CONFIGURATION>")
 
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED TRUE)
-set(CMAKE_C_STANDARD 17)
-set(CMAKE_C_STANDARD_REQUIRED TRUE)
 
-option(BUILD_RESTRICTED "Build IAMTa" OFF)
+option(UVEMT_RESTRICTED_BUILD "Build IAMTa" OFF)
 option(DEBUG_OUTPUT "Print out debug information" OFF)
 
-project(example
+if (MSVC)
+    add_compile_options("/utf-8")
+endif()
+
+project(UVEMT-project
     LANGUAGES CXX
-    VERSION 0.0.0.1
+    VERSION 3.7.0.0
+    DESCRIPTION "Ultra VGA Engine Mod Tool, previously known as IAMT, CIMT."
+    HOMEPAGE_URL "https://github.com/VerMishelb/UVEMT"
 )
 
-add_subdirectory(src)
+add_subdirectory(src/UVEMT)
+# add_subdirectory(src/UVEMI)
+
