@@ -1,4 +1,6 @@
-#pragma once
+#ifndef _FileOperations_h_
+#define _FileOperations_h_
+
 #include <string>
 #include <ShlObj.h>
 
@@ -10,3 +12,5 @@ namespace FileOperations {
 
 std::string BrowseFolder(std::string saved_path);
 std::string BrowseFolderNEW(std::string saved_path);
+
+#endif

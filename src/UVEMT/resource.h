@@ -1,7 +1,3 @@
-//{{NO_DEPENDENCIES}}
-// Включаемый файл, созданный в Microsoft Visual C++.
-// Используется CIU string decoder encoder.rc
-//
 #define IDI_ICON1                       101
 
 // Next default values for new objects
