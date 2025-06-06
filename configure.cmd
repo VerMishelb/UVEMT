@@ -1,11 +1,11 @@
-: # This script is cross-platform: line 10 is a Windows command (VS solution), line 7 is a Linux command (Ninja multi-config)
+: # This script is cross-platform: line 10 is a Windows command (VS solution), line 7 is a Linux command (Ninja multi-config). Make sure that this file uses LF (Unix line ending).
 :<<"::CMDLITERAL"
 @ECHO OFF
 GOTO :CMDSCRIPT
 ::CMDLITERAL
 
 cmake -S . -B build -D CMAKE_BUILD_TYPE=Release -G "Ninja Multi-Config"
-
+exit
 :CMDSCRIPT
 cmake -S . -B build -D CMAKE_BUILD_TYPE=Release -A Win32
 

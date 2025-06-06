@@ -13,8 +13,7 @@ cd ./UVEMT
 ```
 2. Run `configure.cmd`.
 3. Run `build.cmd`
-The resulting executable will be in `./UVEMT/build/Release`.
-Edit `configure.cmd`, `build.cmd` and `install.cmd` with your values if necessary.
+The resulting executable will be in `./UVEMT/build/Release`. Edit `configure.cmd`, `build.cmd` and `install.cmd` with your values if necessary.
 ### Manual
 NOTE: This section may change because I don't know yet whether I'll need simdutf or not.  
 `.../UVEMT` is a directory with UVEMT source.  
@@ -43,6 +42,4 @@ git clone https://github.com/VerMishelb/UVEMT
 cd ./UVEMT
 ```
 2. Run `configure.cmd`. If it cannot be run, allow execution with `chmod +x configure.cmd`.
-3. Run `build.cmd`
-The resulting executable will be in `./UVEMT/build/Release`.
-Edit `configure.cmd`, `build.cmd` and `install.cmd` with your values if necessary.
+3. Run `build.cmd`. The resulting executable will be in `./UVEMT/build/Release`. Edit `configure.cmd`, `build.cmd` and `install.cmd` with your values if necessary.
