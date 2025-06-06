@@ -21,7 +21,7 @@ project(UVEMT-project
     HOMEPAGE_URL "https://github.com/VerMishelb/UVEMT"
 )
 
-find_package(simdutf REQUIRED)
+# find_package(simdutf REQUIRED)
 
 add_subdirectory(src/UVEMT)
 # add_subdirectory(src/UVEMI)
