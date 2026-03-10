@@ -24,4 +24,4 @@ endif()
 
 target_include_directories(UVEMT PUBLIC ${CMAKE_CURRENT_SOURCE_DIR} ${PROJECT_BINARY_DIR}/src/UVEMT)
 
-target_link_libraries(UVEMT PUBLIC simdutf::simdutf)
+target_link_libraries(UVEMT PUBLIC)
