@@ -1,0 +1,33 @@
+# Empty lines, lines with a hash or a semicolon at the beginning are ignored.
+
+# [WAD File]
+# [[Mod File 1]]
+# [[[part:total]]]
+# Mod name from metadata
+# Mod version
+# [[[2:2]]]
+# Date mod created
+# Date installed
+# Replaced file 1
+# Replaced file 2...
+
+
+0.2
+[CIU.dat.222x.standard]
+[[EpicMusicMod.uvemod]]
+[[[0:0]]]
+Name=Epic music mod
+Version=v1.3
+Created=2025-10-19T15:37:01Z
+Installed=2025-10-19T15:42:37Z
+music/quiet.ogg
+
+[CIU.dat.222x.easter]
+[[appl.uvemod]]
+[[[0:0]]]
+Name=Apple to fumo
+Version=v1.0
+Created=2024-02-11T10:48:29Z
+Installed=2025-10-19T15:43:02Z
+gfx/arcade/appleCore.tga
+gfx/arcade/appleCore.tga.ini.preload
