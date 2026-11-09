@@ -762,8 +762,8 @@ LABEL_MENU:
 		if (argc < 2) { // If there are no files dragged on IAMI
 			std::cout << "\nSelect mod files: ";
 			mod_file_paths_vector = CommonItemOpenFiles(L"Select mod files", FILTERS_MOD, FILTERS_MOD_SIZE);
-			for (size_t booba = 0; booba < mod_file_paths_vector.size(); ++booba) {
-				std::cout << Wide2UTF(mod_file_paths_vector[booba]) << '\n';
+			for (size_t boo = 0; boo < mod_file_paths_vector.size(); ++boo) {
+				std::cout << Wide2UTF(mod_file_paths_vector[boo]) << '\n';
 			}
 		}
 		else {
