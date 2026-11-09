@@ -2,6 +2,10 @@
 Ultra VGA Engine Mod Tool.
 The forever unfinished CLI version rewrite that was supposed to be done ages ago.
 
+IAMT and IAMI code can be found in src with a "Legacy" suffix.
+Anything below this line is NOT finished and will not work. This includes the CMakeLists found in Legacy folders,
+although you can still compile the code if you fix it manually (the original project used SLN).
+
 # Building
 ## Windows
 Prerequesites: Visual Studio or MSVC Build tools, CMake 3.30+, git.
