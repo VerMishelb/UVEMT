@@ -1,3 +1,20 @@
+/*
+Copyright 2020-2026 VerMishelb <vermishelb535@gmail.com>
+
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+Icon 2 (icon1.ico) made by IceIris
+Icon 1 (booka.ico) made by Francis
+
+InterAction Mod Installer, 16.09.20
+
+Installs mod files created with InterAction Mod Tool. Uses IAMT code as the base.
+*/
+
 //PLATFORM
 //#define B_LINUX
 #define B_WIN
@@ -10,7 +27,6 @@
 
 #include "Crossplatform.h"
 #include <lmcons.h>
-#include "legacy.hpp"
 
 
 //#define DEBUG_OUTPUT
@@ -18,7 +34,7 @@
 //#define EXCLUDE_4
 
 
-#define IAMI_VERSION "v1.3.9.0"
+#define IAMI_VERSION "v1.3.9.0 (/MD)"
 
 #ifdef DEBUG_OUTPUT
 #define DLOG(s) DLOGfunc((s), __LINE__)
@@ -56,7 +72,7 @@ Fixed "Open with..." action (bug introduced in 1.3.6). Now you can assign IAMI f
 Fixed completion percentage output (on Windows 10 for sure, idk whether Win7's command line treats \\r escape sequence).
 
 1.3.6.2
-
+a
 
 1.3.6.1
 Added a resource file for version display.
@@ -120,6 +136,8 @@ void DLOGfunc(std::string s, int line_num) {
 		"\x1b[0m" "\x1b[38;5;10m " << s << "\033[0m\n";
 #endif
 }
+
+const unsigned char ek[] = { 67, 177, 172, 181, 38, 215, 76, 33, 89, 213, 93, 29, 211, 51, 27, 116, 238, 50, 240, 169, 25, 228, 143, 124, 9, 243, 184, 129, 32 };
 
 #define FILTERS_MOD_SIZE 2
 #define FILTERS_DAT_SIZE 2
@@ -314,7 +332,7 @@ uint32_t CRC32(char* buf, size_t len) {
 	for (int i = 0; i < 256; i++) {
 		crc = i;
 		for (int j = 0; j < 8; j++)
-			crc = crc & 1 ? (crc >> 1) ^ crc_seed : crc >> 1;
+			crc = crc & 1 ? (crc >> 1) ^ 0xEDB88320UL : crc >> 1;
 		crc_table[i] = crc;
 	}
 	crc = 0xFFFFFFFFUL;
@@ -331,12 +349,14 @@ uint32_t CRC32(std::fstream& file, size_t len, size_t start_from = 0) {
 	for (int i = 0; i < 256; i++) {
 		crc = i;
 		for (int j = 0; j < 8; j++)
-			crc = crc & 1 ? (crc >> 1) ^ crc_seed : crc >> 1;
+			crc = crc & 1 ? (crc >> 1) ^ 0xEDB88320UL : crc >> 1;
 		crc_table[i] = crc;
 	}
 	crc = 0xFFFFFFFFUL;
 
+	// char* buffer = new char[BUF_SIZE];
 	char* buffer_ptr = buffer;
+	// memset(buffer, 0, BUF_SIZE);
 	std::streampos old_file_pos = file.tellg();
 
 	size_t current_pos = 0;
@@ -359,6 +379,7 @@ uint32_t CRC32(std::fstream& file, size_t len, size_t start_from = 0) {
 		DLOG("[CRC] Bytes " + std::to_string(current_pos) + " of " + std::to_string(len));
 	}
 	file.seekg(old_file_pos);
+	// delete[] buffer;
 
 	return crc ^ 0xFFFFFFFFUL;
 }
@@ -369,7 +390,7 @@ uint32_t CRC32(const std::vector<uint8_t>& buf, size_t bufSize) {
 	for (uint16_t i = 0; i < 256; i++) {
 		crc = i;
 		for (int8_t j = 0; j < 8; j++)
-			crc = crc & 1 ? (crc >> 1) ^ crc_seed : crc >> 1;
+			crc = crc & 1 ? (crc >> 1) ^ 0xEDB88320UL : crc >> 1;
 		crc_table[i] = crc;
 	}
 	crc = 0xFFFFFFFFUL;
@@ -380,7 +401,34 @@ uint32_t CRC32(const std::vector<uint8_t>& buf, size_t bufSize) {
 	return crc ^ 0xFFFFFFFFUL;
 }
 
+void protection(char* buf, size_t buf_size, uintmax_t start_offset) {
+	for (size_t counter = 0; counter < buf_size; counter++) {
+		buf[counter] -= ek[start_offset % 29];
+		start_offset++;
+	}
+}
 
+void protection(std::vector<uint8_t>& buf, size_t buf_size, size_t start_offset) {
+	for (size_t counter = 0; counter < buf_size; ++counter) {
+		buf[counter] -= ek[start_offset % 29];
+		++start_offset;
+	}
+}
+
+uint32_t decursed(uint32_t value, uintmax_t start_offset) {
+	char arr[4];
+	uint32_t r_value;
+	memcpy(arr, &value, sizeof(uint32_t));
+	protection(arr, 4, start_offset);
+	memcpy(&r_value, arr, sizeof(uint32_t));
+	return r_value;
+}
+
+uint8_t decursed(uint8_t value, uint64_t start_offset) {
+	uint8_t ek[] = { 67, 177, 172, 181, 38, 215, 76, 33, 89, 213, 93, 29, 211, 51, 27, 116, 238, 50, 240, 169, 25, 228, 143, 124, 9, 243, 184, 129, 32 };
+	value -= ek[start_offset % 29];
+	return value;
+}
 
 
 //Internal stuff
@@ -456,9 +504,8 @@ static bool ProgressBarReset() {
 }
 // Progress must be 0-PROGRESS_BAR_WIDTH.
 static bool ProgressBarSet(int progress) {
-	if (progress == PROGRESS_BAR_last_progress) { return false; }
+	if (progress == PROGRESS_BAR_last_progress) return false;
 	if (progress == 0) { return ProgressBarReset(); }
-	if (progress > PROGRESS_BAR_WIDTH) { progress = PROGRESS_BAR_WIDTH; }
 
 	for (int i = 1+PROGRESS_BAR_last_progress; i <= progress; ++i ) {
 		PROGRESS_BAR_LINE[i] = '#';
@@ -468,6 +515,9 @@ static bool ProgressBarSet(int progress) {
 }
 
 void CopyFilePart(std::fstream& f_from, std::fstream& f_to, size_t part_size, size_t decurse_pos = -1) {
+	// char* buffer = new char[BUF_SIZE];
+	// memset(buffer, 0, BUF_SIZE);
+
 	size_t current_pos = 0;
 	putchar('\n');
 	printf("Copying files\n");
@@ -481,6 +531,7 @@ void CopyFilePart(std::fstream& f_from, std::fstream& f_to, size_t part_size, si
 			bytes_amount = part_size - current_pos;
 		}
 
+		//mumbo jumbo yed
 		f_from.read(buffer, bytes_amount);
 		if (decurse_pos != -1) {
 			protection(buffer, bytes_amount, current_pos + decurse_pos);
@@ -493,9 +544,13 @@ void CopyFilePart(std::fstream& f_from, std::fstream& f_to, size_t part_size, si
 		DLOG("Bytes " + std::to_string(current_pos) + " of " + std::to_string(part_size));
 	}
 	putchar('\n');
+	// delete[] buffer;
 }
 
 void CopyFilePart(std::ifstream& f_from, std::fstream& f_to, size_t part_size, size_t decurse_pos = -1) {
+	// char* buffer = new char[BUF_SIZE];
+	// memset(buffer, 0, BUF_SIZE);
+
 	size_t current_pos = 0;
 	while (current_pos < part_size) {
 		size_t bytes_amount;
@@ -506,6 +561,7 @@ void CopyFilePart(std::ifstream& f_from, std::fstream& f_to, size_t part_size, s
 			bytes_amount = part_size - current_pos;
 		}
 
+		//mumbo jumbo yed
 		f_from.read(buffer, bytes_amount);
 		if (decurse_pos != -1) {
 			protection(buffer, bytes_amount, current_pos + decurse_pos);
@@ -514,6 +570,7 @@ void CopyFilePart(std::ifstream& f_from, std::fstream& f_to, size_t part_size, s
 		current_pos += bytes_amount;
 		DLOG("Bytes " + std::to_string(current_pos) + " of " + std::to_string(part_size));
 	}
+	// delete[] buffer;
 }
 
 void callPause(const char* message = "Press Enter to continue...") {
@@ -526,7 +583,7 @@ void deleteAllShit(const std::wstring& dir, const std::wstring ext = L".iamitemp
 		if (p.path().extension() == ext.c_str()) {
 			printf("Removing temp files...\n");
 #ifdef  DEBUG_OUTPUT
-			std::cout << "\Remove: " << Wide2UTF(p.path().c_str()) << '\n';
+			std::cout << "\nRemove: " << Wide2UTF(p.path().c_str()) << '\n';
 #endif //  DEBUG_OUTPUT
 			std::filesystem::remove(p.path());
 		}
@@ -660,6 +717,7 @@ LABEL_MENU:
 		}
 	}
 
+
 	//Installation mode
 	if (mode == 'i') {
 		uint32_t target_crc;
@@ -704,8 +762,8 @@ LABEL_MENU:
 		if (argc < 2) { // If there are no files dragged on IAMI
 			std::cout << "\nSelect mod files: ";
 			mod_file_paths_vector = CommonItemOpenFiles(L"Select mod files", FILTERS_MOD, FILTERS_MOD_SIZE);
-			for (size_t boo = 0; boo < mod_file_paths_vector.size(); ++boo) {
-				std::cout << Wide2UTF(mod_file_paths_vector[boo]) << '\n';
+			for (size_t booba = 0; booba < mod_file_paths_vector.size(); ++booba) {
+				std::cout << Wide2UTF(mod_file_paths_vector[booba]) << '\n';
 			}
 		}
 		else {
@@ -769,7 +827,7 @@ LABEL_MENU:
 			std::cout << "Reading content...\n";
 			mod_file_f.seekg(-4, std::ios::end);
 			mod_file_f.read(reinterpret_cast<char*>(&target_crc), sizeof(uint32_t));
-			target_crc = decursed(target_crc, mod_file_size - 4) - crc_add;
+			target_crc = decursed(target_crc, mod_file_size - 4) - 0x93E56B02;
 			DLOG("Decursing mod_file");
 			DLOG("Creating temp file");
 			std::fstream temp_mod_file(TEMP_PATH + std::to_wstring(target_crc) + L".iamitemp", std::ios::out | std::ios::in | std::ios::trunc | std::ios::binary);
@@ -1162,7 +1220,7 @@ LABEL_MENU:
 				std::vector<uint8_t> ciu_table_v;
 				std::filesystem::path fs_table_path(UTF2Wide(tool_path) + L"CIU.iami");
 #ifdef DEBUG_OUTPUT
-// где
+
 #endif
 				std::ifstream ciu_table_f(fs_table_path, std::ios::binary);
 				if (!ciu_table_f) {
